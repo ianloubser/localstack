@@ -31,7 +31,7 @@ from localstack.utils.aws.arns import (
 )
 from localstack.utils.aws.client_types import ServicePrincipal
 from localstack.utils.json import extract_jsonpath
-from localstack.utils.strings import to_bytes
+from localstack.utils.strings import to_bytes, long_uid
 from localstack.utils.time import now_utc
 
 LOG = logging.getLogger(__name__)
@@ -531,7 +531,7 @@ class StatesTargetSender(TargetSender):
     def send_event(self, event):
         self.service = "stepfunctions"
         self.client.start_execution(
-            stateMachineArn=self.target["Arn"], name=event["id"], input=to_json_str(event)
+            stateMachineArn=self.target["Arn"], name=event.get("id", long_uid()), input=to_json_str(event)
         )
 
     def _validate_input(self, target: Target):
